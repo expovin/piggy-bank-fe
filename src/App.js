@@ -7,6 +7,7 @@ import TransazioniUser from './transazioniUser';
 import UserActionButton from './userActionButtons';
 import UserForm from './userForm';
 import AlertBanner from './alert';
+import GovernedSaldo from './governedSaldo';
 import axios from 'axios';
 
 import './App.css';
@@ -81,7 +82,7 @@ class App extends Component {
       msg:null,
       show:false
     },
-    view:"saldo"
+    view:null
   }
 
   closeAlert = () => {
@@ -168,6 +169,57 @@ class App extends Component {
     })
   }    
 
+  getGoverned = () => {
+    return new Promise ((fulfill, reject) => {
+      axios.get('/api/governed')
+      .then( result => fulfill(result.data.data))
+      .catch(error => {
+        let msgError = {
+          variant:"warning",
+          heading:"Errore recupero governed",
+          msg:error,
+          show:true
+        }
+        this.setState({showError:true, msgError:msgError});
+        reject(error);
+      })
+    })
+  }      
+
+  getGovernedTransazioni = (child_id) => {
+    return new Promise ((fulfill, reject) => {
+      axios.get('/api/governed/transazioni',{headers : {child_id : child_id}})
+      .then( result => fulfill(result.data.data))
+      .catch(error => {
+        let msgError = {
+          variant:"warning",
+          heading:"Errore recupero transazioni governed",
+          msg:error,
+          show:true
+        }
+        this.setState({showError:true, msgError:msgError});
+        reject(error);
+      })
+    })
+  }        
+
+  getTransazioniToApprove = () => {
+    return new Promise ((fulfill, reject) => {
+      axios.get('/api/transaction/approve')
+      .then( result => fulfill(result.data.data))
+      .catch(error => {
+        let msgError = {
+          variant:"warning",
+          heading:"Errore recupero transazioni da approvare",
+          msg:error,
+          show:true
+        }
+        this.setState({showError:true, msgError:msgError});
+        reject(error);
+      })
+    })
+  }      
+
   componentDidMount() {
 
     let params = queryString.parse(window.location.search);
@@ -178,6 +230,15 @@ class App extends Component {
     if(localStorage.getItem('token')){
       this.setState({isLogged:true})
 
+      this.getMe()
+      .then(data => {
+        this.setState({me:data})
+        if(data.tipo === 1)
+          this.setState({view:"approver"})
+        else
+          this.setState({view:"saldo"})
+      })
+      .catch(error => console.log(error))
     }
       
     else
@@ -191,7 +252,7 @@ class App extends Component {
       case 'saldo' :
         return (
           <div>
-            <Header getMe={this.getMe}/>
+            <Header me={this.state.me}/>
             <AlertBanner  alert={this.state.msgError}
                           closeAlert={this.closeAlert} />             
             <SaldoUser getAmount={this.getAmount} />
@@ -204,7 +265,7 @@ class App extends Component {
       case 'SALVA':
         return(
           <div>
-            <Header getMe={this.getMe}/>
+            <Header me={this.state.me}/>
             <AlertBanner  alert={this.state.msgError}
                           closeAlert={this.closeAlert} />             
             <UserForm view={this.state.view} 
@@ -214,6 +275,14 @@ class App extends Component {
           </div>          
         )
 
+      case 'approver':
+        return(
+          <div>
+             <Header me={this.state.me}/>
+             <GovernedSaldo getGoverned={this.getGoverned} 
+                            getTransazioniToApprove={this.getTransazioniToApprove}/>
+          </div>
+        )
       default : return (null);
     }
   }

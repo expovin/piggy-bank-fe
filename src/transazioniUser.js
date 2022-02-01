@@ -10,6 +10,7 @@ class transazioniUser extends Component {
     }
  
     componentDidMount(){
+        console.log("==== transazioniUser ====");
         this.props.getTransactions()
         .then(data => this.setState({transazioni:data}))
         .catch(error => console.log(error))

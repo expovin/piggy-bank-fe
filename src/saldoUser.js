@@ -10,6 +10,7 @@ class saldoUser extends Component {
     }
  
     componentDidMount(){
+        console.log("==== saldoUser ====");
         this.props.getAmount()
         .then(data => this.setState({amount:data}))
         .catch(error => console.log(error))
