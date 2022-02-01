@@ -221,32 +221,7 @@ class App extends Component {
   render(){
     if(!this.state.isLogged) return (<Login />)
     else {     
-      if(this.state.view === "saldo") {
-        return(
-          <div>
-            <Header getMe={this.getMe}/>
-            <AlertBanner  alert={this.state.msgError}
-                          closeAlert={this.closeAlert} />             
-            <SaldoUser getAmount={this.getAmount} />
-            <TransazioniUser getTransactions={this.getTransactions} />
-            <UserActionButton setView={this.setView}/>
-          </div>
-        )        
-      } else {
-        return(
-          <div>
-            <Header getMe={this.getMe}/>
-            <AlertBanner  alert={this.state.msgError}
-                          closeAlert={this.closeAlert} />             
-            <UserForm view={this.state.view} 
-                      addTransactions={this.addTransactions}
-                      setView={this.setView}
-                      setAlert={this.setAlert}/>
-          </div>
-          
-        )
-      }
-      
+        return (this.showCurrentPage())
     }
 
   }
