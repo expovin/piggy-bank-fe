@@ -22,7 +22,7 @@ class Login extends Component {
                         <Card>
                             <Card.Body>
                                 <Card.Title><h5 className="title">Sign In</h5></Card.Title>
-                                <a href={process.env.REACT_APP_BASE+"/auth/google?state="} className="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i className="fab fa-google mr-2"></i>Sign in with Google</a> 
+                                <a href={process.env.REACT_APP_BASE ? process.env.REACT_APP_BASE+"/auth/google" : "/auth/google"} className="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i className="fab fa-google mr-2"></i>Sign in with Google</a> 
                             </Card.Body>
                             <Card.Footer>
                                 <Form.Group controlId="formBasicCheckbox">

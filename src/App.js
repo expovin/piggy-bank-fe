@@ -220,6 +220,61 @@ class App extends Component {
     })
   }      
 
+  setTransazioniToApprove = (id) => {
+    return new Promise ((fulfill, reject) => {
+      axios.put('/api/transaction/approve',{transactionId:id})
+      .then( result => {
+        let msgError = {
+          variant:"info",
+          heading:"Transazione id "+id+" approvata",
+          msg:"Transazione approvata correttamente",
+          show:true
+        }
+        fulfill(result);
+        this.setState({showError:true, msgError:msgError});
+        this.componentDidMount();
+      })
+      .catch(error => {
+        let msgError = {
+          variant:"warning",
+          heading:"Errore nell'approvare una transazione",
+          msg:error,
+          show:true
+        }
+        this.setState({showError:true, msgError:msgError});
+        reject(error);
+      })
+    })
+  }    
+
+  deleteTransazioneToApprove = (id) => {
+    return new Promise ((fulfill, reject) => {
+      axios.delete('/api/transaction/approve',{headers : {transactionid : id}})
+      .then( result => {
+        let msgError = {
+          variant:"info",
+          heading:"Transazione id "+id+" cancellata",
+          msg:"Transazione cancellata correttamente",
+          show:true
+        }
+        fulfill(result);
+        this.setState({showError:true, msgError:msgError});
+        this.componentDidMount();
+      })
+      .catch(error => {
+        let msgError = {
+          variant:"warning",
+          heading:"Errore nell'approvare una transazione",
+          msg:error,
+          show:true
+        }
+        this.setState({showError:true, msgError:msgError});
+        reject(error);
+      })
+    })
+  }    
+
+
   componentDidMount() {
 
     let params = queryString.parse(window.location.search);
@@ -279,8 +334,12 @@ class App extends Component {
         return(
           <div>
              <Header me={this.state.me}/>
+             <AlertBanner  alert={this.state.msgError}
+                           closeAlert={this.closeAlert} />    
              <GovernedSaldo getGoverned={this.getGoverned} 
-                            getTransazioniToApprove={this.getTransazioniToApprove}/>
+                            getTransazioniToApprove={this.getTransazioniToApprove}
+                            setTransazioniToApprove={this.setTransazioniToApprove}
+                            deleteTransazioneToApprove={this.deleteTransazioneToApprove}/>
           </div>
         )
       default : return (null);
